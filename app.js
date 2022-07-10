@@ -77,14 +77,27 @@ const displayController = (() => {
         }
     }
 
-    return {playerOnePiece, changePiece, changeMarkers, changePlayers}; 
+    const resultDisplayer = (text) => {
+        let board = document.getElementsByClassName('gameBoard');
+            let con = document.getElementsByClassName('container');
+            let control = document.getElementsByClassName('controllers')
+            
+            let resultDisplay = document.createElement('div');
+            resultDisplay.setAttribute('class', 'displayResult');
+            con[0].appendChild(resultDisplay);
+            resultDisplay.innerHTML = `${text}`;
+            board[0].setAttribute('class', 'gameBoard playerOneWins');
+            control[0].setAttribute('class', 'controllers playerOneWins');
+    }
+
+    return {playerOnePiece, changePiece, changeMarkers, changePlayers, resultDisplayer}; 
 })();
 
 const gameLogic = (() => {
-    const s = document.getElementsByClassName('square');
-    let gameResult = '';
 
     const gameWinner = () => {
+        const s = document.getElementsByClassName('square');
+
         if (s[0].innerHTML == 'x' && s[1].innerHTML == 'x' && s[2].innerHTML == 'x'
         || s[3].innerHTML == 'x' && s[4].innerHTML == 'x' && s[5].innerHTML == 'x'
         || s[6].innerHTML == 'x' && s[7].innerHTML == 'x' && s[8].innerHTML == 'x'
@@ -93,7 +106,8 @@ const gameLogic = (() => {
         || s[2].innerHTML == 'x' && s[5].innerHTML == 'x' && s[8].innerHTML == 'x'
         || s[0].innerHTML == 'x' && s[4].innerHTML == 'x' && s[8].innerHTML == 'x'
         || s[2].innerHTML == 'x' && s[4].innerHTML == 'x' && s[6].innerHTML == 'x') {
-            console.log('one');
+            displayController.resultDisplayer('Player One Wins!');
+            gameLogic.endGame();
         } 
         else if (s[0].innerHTML == 'o' && s[1].innerHTML == 'o' && s[2].innerHTML == 'o'
         || s[3].innerHTML == 'o' && s[4].innerHTML == 'o' && s[5].innerHTML == 'o'
@@ -103,7 +117,8 @@ const gameLogic = (() => {
         || s[2].innerHTML == 'o' && s[5].innerHTML == 'o' && s[8].innerHTML == 'o'
         || s[0].innerHTML == 'o' && s[4].innerHTML == 'o' && s[8].innerHTML == 'o'
         || s[2].innerHTML == 'o' && s[4].innerHTML == 'o' && s[6].innerHTML == 'o') {
-            console.log('two');
+            displayController.resultDisplayer('Player Two Wins!');
+            gameLogic.endGame();
         } else {
             for (let i = 0; i < 9; i++) {
                 if (i != 8 && s[i].innerHTML != '') {
@@ -111,13 +126,22 @@ const gameLogic = (() => {
                 } else if (s[i].innerHTML == '') {
                     break;
                 } else if (i == 8 && s[i].innerHTML != '') {
-                    console.log('draw');
+                    displayController.resultDisplayer('Its a Draw!');
+                    gameLogic.endGame();
                 }
             }
         }
     }
+
+    const endGame = () => {
+        const squares = document.getElementsByClassName('square');
+        for (let i = 0; i < 9; i++) {
+            let newSquare = squares[i].cloneNode(true);
+            squares[i].parentNode.replaceChild(newSquare, squares[i]);
+        }
+    }
     
-    return {gameWinner};
+    return {gameWinner, endGame};
 })();
 
 displayController.playerOnePiece();

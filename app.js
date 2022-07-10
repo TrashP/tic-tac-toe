@@ -16,6 +16,7 @@ const gameBoard = (() => {
                 square.innerHTML = displayController.changePiece();
                 displayController.changeMarkers();
                 displayController.changePlayers();
+                gameLogic.gameWinner();
             })
         }
     }    
@@ -80,7 +81,43 @@ const displayController = (() => {
 })();
 
 const gameLogic = (() => {
+    const s = document.getElementsByClassName('square');
+    let gameResult = '';
 
+    const gameWinner = () => {
+        if (s[0].innerHTML == 'x' && s[1].innerHTML == 'x' && s[2].innerHTML == 'x'
+        || s[3].innerHTML == 'x' && s[4].innerHTML == 'x' && s[5].innerHTML == 'x'
+        || s[6].innerHTML == 'x' && s[7].innerHTML == 'x' && s[8].innerHTML == 'x'
+        || s[0].innerHTML == 'x' && s[3].innerHTML == 'x' && s[6].innerHTML == 'x'
+        || s[1].innerHTML == 'x' && s[4].innerHTML == 'x' && s[7].innerHTML == 'x'
+        || s[2].innerHTML == 'x' && s[5].innerHTML == 'x' && s[8].innerHTML == 'x'
+        || s[0].innerHTML == 'x' && s[4].innerHTML == 'x' && s[8].innerHTML == 'x'
+        || s[2].innerHTML == 'x' && s[4].innerHTML == 'x' && s[6].innerHTML == 'x') {
+            console.log('one');
+        } 
+        else if (s[0].innerHTML == 'o' && s[1].innerHTML == 'o' && s[2].innerHTML == 'o'
+        || s[3].innerHTML == 'o' && s[4].innerHTML == 'o' && s[5].innerHTML == 'o'
+        || s[6].innerHTML == 'o' && s[7].innerHTML == 'o' && s[8].innerHTML == 'o'
+        || s[0].innerHTML == 'o' && s[3].innerHTML == 'o' && s[6].innerHTML == 'o'
+        || s[1].innerHTML == 'o' && s[4].innerHTML == 'o' && s[7].innerHTML == 'o'
+        || s[2].innerHTML == 'o' && s[5].innerHTML == 'o' && s[8].innerHTML == 'o'
+        || s[0].innerHTML == 'o' && s[4].innerHTML == 'o' && s[8].innerHTML == 'o'
+        || s[2].innerHTML == 'o' && s[4].innerHTML == 'o' && s[6].innerHTML == 'o') {
+            console.log('two');
+        } else {
+            for (let i = 0; i < 9; i++) {
+                if (i != 8 && s[i].innerHTML != '') {
+                    continue;
+                } else if (s[i].innerHTML == '') {
+                    break;
+                } else if (i == 8 && s[i].innerHTML != '') {
+                    console.log('draw');
+                }
+            }
+        }
+    }
+    
+    return {gameWinner};
 })();
 
 displayController.playerOnePiece();

@@ -14,16 +14,8 @@ const gameBoard = (() => {
 
             square.addEventListener('click', function() {
                 square.innerHTML = displayController.changePiece();
-
-                const markers = document.getElementsByClassName('markers');
-                if (markers[0].classList.contains('selected')) {
-                    markers[1].setAttribute('class', 'markers selected');
-                    markers[0].setAttribute('class', 'markers');
-                }                 
-                if (markers[1].classList.contains('selected')) {
-                    markers[0].setAttribute('class', 'markers selected');
-                    markers[1].setAttribute('class', 'markers');
-                }
+                displayController.changeMarkers();
+                displayController.changePlayers();
             })
         }
     }    
@@ -41,6 +33,10 @@ const displayController = (() => {
             markers[1].setAttribute('class', 'markers selected');
             markers[0].setAttribute('class', 'markers');
         })
+        markers[0].addEventListener('click', function() {
+            markers[0].setAttribute('class', 'markers selected');
+            markers[1].setAttribute('class', 'markers');
+        })
     }   
 
     const changePiece = () => {
@@ -54,25 +50,38 @@ const displayController = (() => {
         return playerPiece;
     }
 
-    return {playerOnePiece, changePiece}; 
+    const changeMarkers = () => {
+        const markers = document.getElementsByClassName('markers');
+        if (markers[0].classList.contains('selected')) {
+            markers[1].setAttribute('class', 'markers selected');
+            markers[0].setAttribute('class', 'markers');
+        }                 
+        else if (markers[1].classList.contains('selected')) {
+            markers[0].setAttribute('class', 'markers selected');
+            markers[1].setAttribute('class', 'markers');
+        }
+    }
+
+    const changePlayers = () => {
+        const playerOne = document.getElementById('one');
+        const playerTwo = document.getElementById('two');
+
+        if (playerOne.classList.contains('selected')) {
+            playerOne.setAttribute('class', '');
+            playerTwo.setAttribute('class', 'selected');
+        }
+        else if (playerTwo.classList.contains('selected')) {
+            playerTwo.setAttribute('class', '');
+            playerOne.setAttribute('class', 'selected');
+        }
+    }
+
+    return {playerOnePiece, changePiece, changeMarkers, changePlayers}; 
 })();
 
 const gameLogic = (() => {
 
 })();
 
-// const player = (name, piece, id) => {
-//     const playerTurn = () => {
-//         const player = document.getElementById(id);
-//         player.setAttribute('class', 'selected');
-//         //const square = document.getElementsByClassName('square');
-
-//     }
-
-//     return {playerTurn};
-// };
-
 displayController.playerOnePiece();
 gameBoard.createSquares();
-// const playerOne = player('one', 'x', 'one');
-// playerOne.playerTurn();

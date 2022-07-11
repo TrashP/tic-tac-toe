@@ -13,12 +13,29 @@ const gameBoard = (() => {
             playerOne.setAttribute('class', 'selected');
 
             square.addEventListener('click', function() {
+                // add functions to switch display after each turn
                 square.innerHTML = displayController.changePiece();
                 displayController.changeMarkers();
                 displayController.changePlayers();
+
+                // function to decide result and display winner
                 gameLogic.gameWinner();
 
+                // disable squares after it is clicked
                 this.removeEventListener('click', arguments.callee);
+
+                // remove event listener from markers
+                for (let i = 0; i < 9; i++) {
+                    const squares = document.getElementsByClassName('square');
+                    if (displayController.markerEvent && squares[i] != '') {
+                        displayController.markerEvent = false;
+                        const markers = document.getElementsByClassName('markers');
+                        let newMarkerX = markers[0].cloneNode(true);
+                        let newMarkerO = markers[1].cloneNode(true);
+                        markers[0].parentNode.replaceChild(newMarkerX, markers[0]);
+                        markers[1].parentNode.replaceChild(newMarkerO, markers[1]);
+                    }
+                }
             })
         }
     }    
@@ -28,8 +45,11 @@ const gameBoard = (() => {
 
 const displayController = (() => {
     let playerPiece = 'x';
+    let markerEvent = true;
 
     const playerOnePiece = () => {
+        // allow player one to choose marker
+        markerEvent = true;
         const markers = document.getElementsByClassName('markers');
         markers[0].setAttribute('class', 'markers selected');
         markers[1].addEventListener('click', function() {
@@ -84,6 +104,7 @@ const displayController = (() => {
         let con = document.getElementsByClassName('container');
         let control = document.getElementsByClassName('controllers')
         
+        // blur the board and display result on top
         let resultDisplay = document.createElement('div');
         resultDisplay.setAttribute('class', 'displayResult');
         con[0].appendChild(resultDisplay);
@@ -92,7 +113,7 @@ const displayController = (() => {
         control[0].setAttribute('class', 'controllers playerWins');
     }
 
-    return {playerOnePiece, changePiece, changeMarkers, changePlayers, resultDisplayer}; 
+    return {markerEvent, playerOnePiece, changePiece, changeMarkers, changePlayers, resultDisplayer}; 
 })();
 
 const gameLogic = (() => {
@@ -100,6 +121,7 @@ const gameLogic = (() => {
     const gameWinner = () => {
         const s = document.getElementsByClassName('square');
 
+        // winning conditions for players
         if (s[0].innerHTML == 'x' && s[1].innerHTML == 'x' && s[2].innerHTML == 'x'
         || s[3].innerHTML == 'x' && s[4].innerHTML == 'x' && s[5].innerHTML == 'x'
         || s[6].innerHTML == 'x' && s[7].innerHTML == 'x' && s[8].innerHTML == 'x'
@@ -122,6 +144,7 @@ const gameLogic = (() => {
             displayController.resultDisplayer('Player Two Wins!');
             gameLogic.endGame();
         } else {
+            // conditions for draw
             for (let i = 0; i < 9; i++) {
                 if (i != 8 && s[i].innerHTML != '') {
                     continue;
@@ -154,8 +177,18 @@ const gameLogic = (() => {
         board[0].setAttribute('class', 'gameBoard');
         control[0].setAttribute('class', 'controllers');
 
+        // switch all display to initial conditions
+        const markers = document.getElementsByClassName('markers');
+        displayController.playerOnePiece();
+        markers[1].setAttribute('class', 'markers');
+        const playerOne = document.getElementById('one');
+        const playerTwo = document.getElementById('two');
+        playerTwo.setAttribute('class', '');
+        playerOne.setAttribute('class', 'selected');
+
         const squares = document.getElementsByClassName('square');
         for (let i = 0; i < 9; i++) {
+            // replace the grid and restart game
             let newSquare = squares[i].cloneNode(true);
             squares[i].parentNode.replaceChild(newSquare, squares[i]);
             newSquare.innerHTML = '';
@@ -165,17 +198,22 @@ const gameLogic = (() => {
                 displayController.changePlayers();
                 gameLogic.gameWinner();
 
+                // remove event listener from markers
+                for (let i = 0; i < 9; i++) {
+                    const squares = document.getElementsByClassName('square');
+                    if (displayController.markerEvent && squares[i] != '') {
+                        displayController.markerEvent = false;
+                        const markers = document.getElementsByClassName('markers');
+                        let newMarkerX = markers[0].cloneNode(true);
+                        let newMarkerO = markers[1].cloneNode(true);
+                        markers[0].parentNode.replaceChild(newMarkerX, markers[0]);
+                        markers[1].parentNode.replaceChild(newMarkerO, markers[1]);
+                    }
+                }
+
                 this.removeEventListener('click', arguments.callee);
             })
         }
-
-        const markers = document.getElementsByClassName('markers');
-        markers[0].setAttribute('class', 'markers selected');
-        markers[1].setAttribute('class', 'markers');
-        const playerOne = document.getElementById('one');
-        const playerTwo = document.getElementById('two');
-        playerTwo.setAttribute('class', '');
-        playerOne.setAttribute('class', 'selected');
     }
     
     return {gameWinner, endGame, restartGame};

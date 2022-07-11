@@ -96,6 +96,6 @@ button {
     font-size: 30px;
 }
 
-.playerOneWins {
+.playerWins {
     filter: blur(6px);
 }

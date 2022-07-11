@@ -17,6 +17,8 @@ const gameBoard = (() => {
                 displayController.changeMarkers();
                 displayController.changePlayers();
                 gameLogic.gameWinner();
+
+                this.removeEventListener('click', arguments.callee);
             })
         }
     }    
@@ -79,15 +81,15 @@ const displayController = (() => {
 
     const resultDisplayer = (text) => {
         let board = document.getElementsByClassName('gameBoard');
-            let con = document.getElementsByClassName('container');
-            let control = document.getElementsByClassName('controllers')
-            
-            let resultDisplay = document.createElement('div');
-            resultDisplay.setAttribute('class', 'displayResult');
-            con[0].appendChild(resultDisplay);
-            resultDisplay.innerHTML = `${text}`;
-            board[0].setAttribute('class', 'gameBoard playerOneWins');
-            control[0].setAttribute('class', 'controllers playerOneWins');
+        let con = document.getElementsByClassName('container');
+        let control = document.getElementsByClassName('controllers')
+        
+        let resultDisplay = document.createElement('div');
+        resultDisplay.setAttribute('class', 'displayResult');
+        con[0].appendChild(resultDisplay);
+        resultDisplay.innerHTML = `${text}`;
+        board[0].setAttribute('class', 'gameBoard playerWins');
+        control[0].setAttribute('class', 'controllers playerWins');
     }
 
     return {playerOnePiece, changePiece, changeMarkers, changePlayers, resultDisplayer}; 
@@ -140,9 +142,46 @@ const gameLogic = (() => {
             squares[i].parentNode.replaceChild(newSquare, squares[i]);
         }
     }
+
+    const restartGame = () => {
+        const removeDisplay = document.getElementsByClassName('displayResult');
+        if (removeDisplay.length > 0) {
+            removeDisplay[0].remove();
+        }
+        let board = document.getElementsByClassName('gameBoard');
+        let control = document.getElementsByClassName('controllers')
+
+        board[0].setAttribute('class', 'gameBoard');
+        control[0].setAttribute('class', 'controllers');
+
+        const squares = document.getElementsByClassName('square');
+        for (let i = 0; i < 9; i++) {
+            let newSquare = squares[i].cloneNode(true);
+            squares[i].parentNode.replaceChild(newSquare, squares[i]);
+            newSquare.innerHTML = '';
+            newSquare.addEventListener('click', function() {
+                newSquare.innerHTML = displayController.changePiece();
+                displayController.changeMarkers();
+                displayController.changePlayers();
+                gameLogic.gameWinner();
+
+                this.removeEventListener('click', arguments.callee);
+            })
+        }
+
+        const markers = document.getElementsByClassName('markers');
+        markers[0].setAttribute('class', 'markers selected');
+        markers[1].setAttribute('class', 'markers');
+        const playerOne = document.getElementById('one');
+        const playerTwo = document.getElementById('two');
+        playerTwo.setAttribute('class', '');
+        playerOne.setAttribute('class', 'selected');
+    }
     
-    return {gameWinner, endGame};
+    return {gameWinner, endGame, restartGame};
 })();
 
 displayController.playerOnePiece();
 gameBoard.createSquares();
+const restart = document.getElementsByClassName('restart');
+restart[0].addEventListener('click', gameLogic.restartGame);

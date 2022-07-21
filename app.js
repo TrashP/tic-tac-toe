@@ -185,6 +185,8 @@ const gameLogic = (() => {
         const playerTwo = document.getElementById('two');
         playerTwo.setAttribute('class', '');
         playerOne.setAttribute('class', 'selected');
+        displayController.markerEvent = true;
+
 
         const squares = document.getElementsByClassName('square');
         for (let i = 0; i < 9; i++) {
